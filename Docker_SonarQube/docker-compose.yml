@@ -1,0 +1,48 @@
+version: "2"
+services:
+  postgresql:
+    restart: always
+    image: postgres:11
+    container_name: postgres11
+    networks:
+      - sonarnetwork
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+  sonar:
+    restart: always
+    image: daabramov/sonarfor1c:9.8-community
+    container_name: sonar_container_for_Jenkins
+    ports:
+      - "9000:9000"
+    depends_on:
+      - postgresql
+    ulimits:
+     nofile:
+      soft: 65535
+      hard: 65535 
+    networks:
+      - sonarnetwork
+    environment:
+      - sonar.jdbc.url=jdbc:postgresql://postgresql:5432/sonar
+      - sonar.web.javaOpts=-server -Xms1g -Xmx2g -XX:+HeapDumpOnOutOfMemoryError
+      - sonar.ce.javaOpts=-Xms4g -Xmx4g -XX:+HeapDumpOnOutOfMemoryError
+      - sonar.search.javaOpts=-Xms2g -Xmx2g -XX:+HeapDumpOnOutOfMemoryError
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+networks:
+  sonarnetwork:
+    driver: bridge
+volumes:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
+  postgresql:
+  postgresql_data:
