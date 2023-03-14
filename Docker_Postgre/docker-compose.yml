@@ -5,8 +5,6 @@ services:
   db:
     image: sibsau/postgres-pro-1c
     container_name: postgres_container
-    networks:
-      - sonarnet
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -39,17 +37,7 @@ services:
         limits:
           cpus: '0.5'
           memory: 1G
-    networks:
-      - sonarnet
-
-networks:
-  sonarnet:
-    driver: bridge
 
 volumes:
-  sonarqube_conf:
-  sonarqube_data:
-  sonarqube_extensions:
-  sonarqube_bundled-plugins:
   postgresql:
   postgresql_data:
